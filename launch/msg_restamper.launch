@@ -1,0 +1,11 @@
+<launch>
+    <arg name="in_topic" default="/velodyne_points"/>
+    <!-- <arg name="out_topic" default="/velodyne_points_restamp"/> -->
+    <arg name="out_topic" default="/velodyne_points"/>
+
+    <node name="msg_restamper" pkg="msg_restamper" type="msg_restamper">
+        <param name="in_topic" value="$(arg in_topic)"/>
+        <param name="out_topic" value="$(arg out_topic)"/>
+    </node>
+
+</launch>

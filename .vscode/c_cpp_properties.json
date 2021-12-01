@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/jay/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/jay/catkin_ws/src/pointgrey_camera_driver/pointgrey_camera_driver/include/**",
+        "/home/jay/catkin_ws/src/flir_camera_driver/spinnaker_camera_driver/include/**",
+        "/home/jay/catkin_ws/src/tesseract_gazebo/include/**",
+        "/home/jay/catkin_ws/src/video_ros/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
