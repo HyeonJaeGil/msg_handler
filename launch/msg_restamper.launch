@@ -1,11 +1,29 @@
 <launch>
-    <arg name="in_topic" default="/velodyne_points"/>
-    <!-- <arg name="out_topic" default="/velodyne_points_restamp"/> -->
-    <arg name="out_topic" default="/velodyne_points"/>
+    <!-- <arg name="in_topic" default="/velodyne_points"/>
+    <arg name="out_topic" default="/velodyne_points_restamped"/> -->
+    <arg name="subscribe_imu" default="true"/>
+    <arg name="subscribe_scan" default="false"/>
+    <arg name="subscribe_pc2" default="false"/>
+    <arg name="subscribe_odom" default="false"/>
 
-    <node name="msg_restamper" pkg="msg_restamper" type="msg_restamper">
-        <param name="in_topic" value="$(arg in_topic)"/>
-        <param name="out_topic" value="$(arg out_topic)"/>
+    <arg name="imu_topic"  default="/imu/data"/>
+    <arg name="scan_topic" default="/scan"/>
+    <arg name="pc2_topic"  default="/velodyne_points"/>    
+    <arg name="odom_topic" default="/camera/odom/sample"/>    
+            
+    
+    <node name="msg_restamper" pkg="msg_handler" type="msg_restamper" output="screen">
+        <param name="subscribe_imu" value= "$(arg subscribe_imu)"/>
+        <param name="subscribe_scan" value="$(arg subscribe_scan)"/>
+        <param name="subscribe_pc2" value= "$(arg subscribe_pc2)"/>
+        <param name="subscribe_odom" value="$(arg subscribe_odom)"/>  
+        
+        <param name="imu_topic" value= "$(arg imu_topic)"/>
+        <param name="scan_topic" value="$(arg scan_topic)"/>
+        <param name="pc2_topic" value= "$(arg pc2_topic)"/>
+        <param name="odom_topic" value="$(arg odom_topic)"/>
+        <!-- <param name="in_topic" value="$(arg in_topic)"/> -->
+        <!-- <param name="out_topic" value="$(arg out_topic)"/> -->
     </node>
 
 </launch>
