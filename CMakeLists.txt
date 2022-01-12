@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   tf2 
   tf2_ros
+  tf2_geometry_msgs
 )
 
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -46,3 +47,6 @@ target_link_libraries(msg_restamper ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(odom_header_frame_converter src/odom_header_frame_converter.cpp)
 target_link_libraries(odom_header_frame_converter ${catkin_LIBRARIES})
+
+add_executable(odom_initializer src/odom_initializer.cpp)
+target_link_libraries(odom_initializer ${catkin_LIBRARIES})
