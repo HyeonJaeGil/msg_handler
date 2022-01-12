@@ -43,7 +43,7 @@ odomHeaderFrameConverter<T>::odomHeaderFrameConverter()
     nh_.getParam("out_topic", out_topic);
     nh_.getParam("parent_frame", parent_frame);
     nh_.getParam("child_frame", child_frame);
-    topic_sub = nh_.subscribe(this->in_topic, 1, 
+    topic_sub = nh_.subscribe(this->in_topic, 100, 
                     &odomHeaderFrameConverter::topic_cb, this);
     topic_pub = nh_.advertise<T>(out_topic, 1);
 }
@@ -74,7 +74,8 @@ void odomHeaderFrameConverter<T>::topic_cb(const T& in_msg)
     if(broadcast_tf)
     {
         geometry_msgs::TransformStamped transformStamped;
-        transformStamped.header.stamp = ros::Time::now();
+        // transformStamped.header.stamp = ros::Time::now();
+        transformStamped.header.stamp = in_msg.header.stamp;
         transformStamped.header.frame_id = parent_frame;
         transformStamped.child_frame_id = child_frame;
         transformStamped.transform.translation.x = out_msg.pose.pose.position.x;
@@ -93,6 +94,9 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "odom_header_frame_converter");
     odomHeaderFrameConverter<nav_msgs::Odometry> odometry_restamper
                     ("/camera/odom/sample", "/odom", "odom", "base_link");
+                    // ("/odometry/filtered_new", "/odom", "odom", "base_link");
+    
+    ROS_INFO("Starting odom header frame converter node ...");
     ros::spin();
     return 0;
 }
