@@ -7,11 +7,11 @@
 
 using std::cout; using std::endl;
 
-template <typename T>
 class odomHeaderFrameConverter{
     
 private:
     bool broadcast_tf;
+    bool new_timestamp;
     std::string in_topic;
     std::string out_topic;
     std::string parent_frame;
@@ -19,12 +19,13 @@ private:
     
 public:
 
-    odomHeaderFrameConverter();
-    odomHeaderFrameConverter(std::string in_topic, std::string out_topic, 
+    odomHeaderFrameConverter(ros::NodeHandle* nodehandle);
+    odomHeaderFrameConverter(ros::NodeHandle* nodehandle,
+                        std::string in_topic, std::string out_topic, 
                         std::string parent_frame, std::string child_frame);
     // ~odomHeaderFrameConverter();
 
-    void topic_cb(const T& in_msg);
+    void topic_cb(const nav_msgs::Odometry& in_msg);
 
     ros::Subscriber topic_sub;
     ros::Publisher topic_pub;
@@ -32,40 +33,47 @@ public:
 
 
 };
-
-template <typename T>
-odomHeaderFrameConverter<T>::odomHeaderFrameConverter()
+odomHeaderFrameConverter::odomHeaderFrameConverter(ros::NodeHandle* nodehandle)
 {
     ros::NodeHandle nh_("~");
     if (!nh_.getParam("broadcast_tf", broadcast_tf))
-        broadcast_tf = true;
-    nh_.getParam("in_topic", in_topic);
-    nh_.getParam("out_topic", out_topic);
-    nh_.getParam("parent_frame", parent_frame);
-    nh_.getParam("child_frame", child_frame);
+        broadcast_tf = true;    
+    if (!nh_.getParam("new_timestamp", new_timestamp))
+        new_timestamp = false;
+    if (nh_.getParam("in_topic", in_topic))
+        in_topic = "/camera/odom/sample";
+    if (nh_.getParam("out_topic", out_topic))
+        out_topic = "/odom";
+    if (nh_.getParam("parent_frame", parent_frame))
+        parent_frame = "odom";
+    if (nh_.getParam("child_frame", child_frame))
+        child_frame = "base_link";
     topic_sub = nh_.subscribe(this->in_topic, 100, 
                     &odomHeaderFrameConverter::topic_cb, this);
-    topic_pub = nh_.advertise<T>(out_topic, 1);
+    topic_pub = nh_.advertise<nav_msgs::Odometry>(out_topic, 1);
 }
 
-template <typename T>
-odomHeaderFrameConverter<T>::odomHeaderFrameConverter
-                (std::string in_topic, std::string out_topic, 
+odomHeaderFrameConverter::odomHeaderFrameConverter(ros::NodeHandle* nodehandle,
+                std::string in_topic, std::string out_topic, 
                 std::string parent_frame, std::string child_frame)
 {
     ros::NodeHandle nh_("~");
+
+    if (!nh_.getParam("broadcast_tf", broadcast_tf))
+        broadcast_tf = true;    
+    if (!nh_.getParam("new_timestamp", new_timestamp))
+        new_timestamp = true;
     topic_sub = nh_.subscribe(in_topic, 1, 
                     &odomHeaderFrameConverter::topic_cb, this);
-    topic_pub = nh_.advertise<T>(out_topic, 1);
+    topic_pub = nh_.advertise<nav_msgs::Odometry>(out_topic, 1);
     this->parent_frame = parent_frame;
     this->child_frame = child_frame;
 }
 
 
-template <typename T>
-void odomHeaderFrameConverter<T>::topic_cb(const T& in_msg)
+void odomHeaderFrameConverter::topic_cb(const nav_msgs::Odometry& in_msg)
 {
-    T out_msg(std::move(in_msg));
+    nav_msgs::Odometry out_msg(std::move(in_msg));
     // out_msg.header.stamp = ros::Time::now();
     out_msg.header.frame_id = parent_frame;
     out_msg.child_frame_id = child_frame;
@@ -74,8 +82,10 @@ void odomHeaderFrameConverter<T>::topic_cb(const T& in_msg)
     if(broadcast_tf)
     {
         geometry_msgs::TransformStamped transformStamped;
-        // transformStamped.header.stamp = ros::Time::now();
-        transformStamped.header.stamp = in_msg.header.stamp;
+        if(new_timestamp)
+            transformStamped.header.stamp = ros::Time::now();
+        else
+            transformStamped.header.stamp = in_msg.header.stamp;
         transformStamped.header.frame_id = parent_frame;
         transformStamped.child_frame_id = child_frame;
         transformStamped.transform.translation.x = out_msg.pose.pose.position.x;
@@ -92,9 +102,9 @@ void odomHeaderFrameConverter<T>::topic_cb(const T& in_msg)
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "odom_header_frame_converter");
-    odomHeaderFrameConverter<nav_msgs::Odometry> odometry_restamper
-                    ("/camera/odom/sample", "/odom", "odom", "base_link");
-                    // ("/odometry/filtered_new", "/odom", "odom", "base_link");
+    ros::NodeHandle nh("~");
+    odomHeaderFrameConverter ohfc
+                    (&nh, "/camera/odom/sample", "/odom", "odom", "base_link");
     
     ROS_INFO("Starting odom header frame converter node ...");
     ros::spin();
