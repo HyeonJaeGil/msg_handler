@@ -52,4 +52,4 @@ add_executable(odom_initializer src/odom_initializer.cpp)
 target_link_libraries(odom_initializer ${catkin_LIBRARIES})
 
 add_executable(vo_tester src/vo_tester.cpp)
-target_link_libraries(vo_tester ${catkin_LIBRARIES})
+target_link_libraries(vo_tester ${catkin_LIBRARIES} ${Boost_LIBRARIES}) 
