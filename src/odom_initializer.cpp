@@ -68,8 +68,8 @@ void odomInitializer::topic_cb(nav_msgs::OdometryConstPtr odom_in)
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "odom_initializer");
-    odomInitializer odom_initializer("/odometry/filtered");
-    // odomInitializer odom_initializer("/camera/odom/sample");
+    odomInitializer odom_initializer_wheel("/odometry/filtered");
+    odomInitializer odom_initializer_camera("/camera/odom/sample");
 
     ROS_INFO("Starting odom initializer node ...");
     ros::spin();

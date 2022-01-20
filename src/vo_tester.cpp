@@ -117,7 +117,7 @@ void voTester::vo_cb(nav_msgs::OdometryConstPtr vo_in)
     tf2::toMsg(transform_out, this->local_vo);
 
     this->tracking_vo = vo_in->pose.pose;
-    publishState(tracking_vo, vo_in->header);
+    // publishState(tracking_vo, vo_in->header);
 }
 
 
@@ -129,7 +129,7 @@ void voTester::wheel_cb(nav_msgs::OdometryConstPtr wheel_in)
     tf2::toMsg(transform_out, this->local_wheel);
 
     this->tracking_wheel = wheel_in->pose.pose;
-    // publishState(tracking_vo, vo_in->header);
+    publishState(tracking_wheel, wheel_in->header);
 }
 
 
@@ -203,10 +203,10 @@ void voTester::publishState(geometry_msgs::Pose pose, std_msgs::Header header)
     // m.ns = "LEGS";
     // m.id = id_num++;
     m.type = m.SPHERE;
-    m.pose.position.x = pose.position.x ;
+    m.pose.position.x = pose.position.x;
     m.pose.position.y = pose.position.y;
     m.pose.position.z = 0.2;
-    m.lifetime = ros::Duration(2.0);
+    m.lifetime = ros::Duration(5.0);
     m.scale.x = 0.13;
     m.scale.y = 0.13;
     m.scale.z = 0.13;
