@@ -62,7 +62,7 @@ odomHeaderFrameConverter::odomHeaderFrameConverter(ros::NodeHandle* nodehandle,
     if (!nh_.getParam("broadcast_tf", broadcast_tf))
         broadcast_tf = true;    
     if (!nh_.getParam("new_timestamp", new_timestamp))
-        new_timestamp = true;
+        new_timestamp = false;
     topic_sub = nh_.subscribe(in_topic, 1, 
                     &odomHeaderFrameConverter::topic_cb, this);
     topic_pub = nh_.advertise<nav_msgs::Odometry>(out_topic, 1);
@@ -104,7 +104,8 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "odom_header_frame_converter");
     ros::NodeHandle nh("~");
     odomHeaderFrameConverter ohfc
-                    (&nh, "/camera/odom/sample", "/odom", "odom", "base_link");
+                    (&nh, "/odometry/filtered_new", "/odom", "odom", "wheel_center");
+                    // (&nh, "/camera/odom/sample_new", "/odom", "odom", "wheel_center");
     
     ROS_INFO("Starting odom header frame converter node ...");
     ros::spin();
