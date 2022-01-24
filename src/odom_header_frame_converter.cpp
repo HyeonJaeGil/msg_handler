@@ -105,9 +105,10 @@ int main(int argc, char** argv)
     ros::NodeHandle nh("~");
     // odomHeaderFrameConverter ohfc_wheel
     //                 (&nh, "/odometry/filtered_new", "/odom", "odom", "wheel_center");
-    odomHeaderFrameConverter ohfc_camera
-                    (&nh, "/camera/odom/sample_new", "/odom", "odom", "wheel_center");
-
+    // odomHeaderFrameConverter ohfc_camera
+    //                 (&nh, "/camera/odom/sample_new", "/odom", "odom", "wheel_center");
+    odomHeaderFrameConverter ohfc_lio
+                    (&nh, "/lio_sam/mapping/odometry", "/odom", "odom", "wheel_center");
 
     ROS_INFO("Starting odom header frame converter node ...");
     ros::spin();
